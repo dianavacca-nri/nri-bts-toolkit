@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NRI BTS Prep Brief — Prompt Builder v4b</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --blue-primary: #0a64ff;
+  --blue-mid: #004cc9;
+  --blue-dark: #002e85;
+  --teal: #00cfbe;
+  --teal-mid: #00a39b;
+  --sky: #00cbeb;
+  --yellow: #fec709;
+  --amber: #f28f00;
+  --green: #56bf74;
+  --warm-white: #fff9f6;
+  --warm-gray: #f5f4ee;
+  --body: #333333;
+  --mid-gray: #707070;
+  --light-gray: #bfbfbf;
+  --border: #d9d9d9;
+  --near-white: #ebebeb;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--warm-gray);
+  color: var(--body);
+  padding: 2rem 1rem 4rem;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.wrap { max-width: 700px; margin: 0 auto; }
+
+.header {
+  background: var(--blue-dark);
+  border-radius: 14px;
+  padding: 1.5rem 1.75rem;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.header-left h1 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: -0.01em;
+}
+.header-left p {
+  font-size: 12px;
+  color: rgba(255,255,255,0.6);
+  margin-top: 3px;
+}
+.header-badge {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  background: var(--yellow);
+  color: var(--blue-dark);
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
+.step-block {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 12px;
+}
+.step-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.step-num {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--blue-primary);
+  background: #e8f0ff;
+  border-radius: 4px;
+  padding: 2px 7px;
+  letter-spacing: 0.05em;
+}
+.step-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--body);
+}
+.opt-tag {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--mid-gray);
+  background: var(--near-white);
+  border-radius: 4px;
+  padding: 2px 6px;
+  margin-left: 2px;
+}
+.step-hint {
+  font-size: 12px;
+  color: var(--mid-gray);
+  margin-bottom: 10px;
+  margin-top: -4px;
+}
+
+.pill-row { display: flex; flex-wrap: wrap; gap: 7px; }
+.pill {
+  font-size: 12px;
+  font-weight: 500;
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1.5px solid var(--border);
+  background: var(--warm-white);
+  color: var(--mid-gray);
+  cursor: pointer;
+  transition: all 0.13s;
+  user-select: none;
+}
+.pill:hover { border-color: var(--blue-primary); color: var(--blue-primary); background: #f0f5ff; }
+.pill.active { background: var(--blue-primary); color: #fff; border-color: var(--blue-primary); }
+.pill.health-low.active { background: #e70d47; border-color: #e70d47; }
+.pill.health-med.active { background: var(--amber); border-color: var(--amber); }
+.pill.health-high.active { background: var(--green); border-color: var(--green); }
+
+.pill-desc {
+  font-size: 11px;
+  color: var(--mid-gray);
+  margin-top: 8px;
+  font-style: italic;
+  min-height: 14px;
+  line-height: 1.5;
+}
+
+textarea, input[type=text] {
+  width: 100%;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  color: var(--body);
+  background: var(--warm-white);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 9px 12px;
+  transition: border-color 0.13s, box-shadow 0.13s;
+  resize: vertical;
+}
+textarea { min-height: 76px; }
+textarea:focus, input[type=text]:focus {
+  outline: none;
+  border-color: var(--blue-primary);
+  box-shadow: 0 0 0 3px rgba(10,100,255,0.1);
+}
+
+.sub-card {
+  background: var(--warm-gray);
+  border-radius: 10px;
+  padding: 1rem 1.125rem;
+  margin-bottom: 10px;
+}
+.sub-card-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--body);
+  margin-bottom: 2px;
+}
+.sub-card-hint {
+  font-size: 11px;
+  color: var(--mid-gray);
+  margin-bottom: 9px;
+}
+.field-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+  margin-top: 8px;
+}
+.field-label {
+  font-size: 11px;
+  color: var(--mid-gray);
+  margin-bottom: 3px;
+  font-weight: 500;
+}
+
+.prefill-btn {
+  display: inline-block;
+  font-size: 11px;
+  color: var(--blue-primary);
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-family: inherit;
+  text-decoration: underline;
+  padding: 0;
+  margin-top: 5px;
+}
+
+.generate-wrap {
+  margin-top: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.generate-btn {
+  width: 100%;
+  padding: 14px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  background: var(--blue-primary);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  letter-spacing: -0.01em;
+  transition: background 0.13s, transform 0.1s;
+}
+.generate-btn:hover { background: var(--blue-mid); }
+.generate-btn:active { transform: scale(0.99); }
+.generate-btn-deck {
+  width: 100%;
+  padding: 14px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  background: var(--teal-mid);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  letter-spacing: -0.01em;
+  transition: background 0.13s, transform 0.1s;
+}
+.generate-btn-deck:hover { background: #007a72; }
+.generate-btn-deck:active { transform: scale(0.99); }
+.btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.btn-hint { font-size: 11px; color: var(--mid-gray); text-align: center; margin-top: 6px; }
+
+.output-box {
+  display: none;
+  margin-top: 1rem;
+  background: #fff;
+  border-radius: 12px;
+  border: 1.5px solid var(--blue-primary);
+  padding: 1.25rem 1.5rem;
+}
+.output-box.visible { display: block; }
+.output-box-deck {
+  display: none;
+  margin-top: 1rem;
+  background: #fff;
+  border-radius: 12px;
+  border: 1.5px solid var(--teal-mid);
+  padding: 1.25rem 1.5rem;
+}
+.output-box-deck.visible { display: block; }
+.output-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.output-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--blue-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.copy-btn {
+  font-size: 12px;
+  font-weight: 500;
+  font-family: 'DM Sans', sans-serif;
+  padding: 5px 14px;
+  background: var(--blue-primary);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.copy-btn:hover { background: var(--blue-mid); }
+.output-text {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  color: var(--body);
+  white-space: pre-wrap;
+  line-height: 1.7;
+  background: var(--warm-gray);
+  border-radius: 8px;
+  padding: 12px 14px;
+  max-height: 500px;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="header">
+    <div class="header-left">
+      <h1>BTS Prep Brief — Prompt Builder</h1>
+      <p>Fill in what you have. Copy the prompt into a new Claude chat.</p>
+    </div>
+    <div class="header-badge">v4b</div>
+  </div>
+
+  <!-- STEP 1: Meeting type -->
+  <div class="step-block">
+    <div class="step-meta">
+      <span class="step-num">STEP 1</span>
+      <span class="step-title">Meeting type</span>
+    </div>
+    <div class="pill-row" id="meeting-pills">
+      <div class="pill active" data-val="BTS Impact Planning" onclick="selectPill('meeting-pills',this)">BTS impact planning</div>
+      <div class="pill" data-val="Impact Review" onclick="selectPill('meeting-pills',this)">Impact review</div>
+      <div class="pill" data-val="Renewal Conversation" onclick="selectPill('meeting-pills',this)">Renewal conversation</div>
+      <div class="pill" data-val="Impact + Renewal" onclick="selectPill('meeting-pills',this)">Impact + renewal</div>
+    </div>
+    <div class="pill-desc" id="meeting-desc">Early season strategic reset. 26-27 discovery and goal-setting are the primary agenda.</div>
+  </div>
+
+  <!-- STEP 2: Stakeholder health -->
+  <div class="step-block">
+    <div class="step-meta">
+      <span class="step-num">STEP 2</span>
+      <span class="step-title">Stakeholder health</span>
+    </div>
+    <div class="step-hint">Low = one contact, no EB · Medium = champion, limited EB · High = EB engaged, multi-stakeholder</div>
+    <div class="pill-row" id="sh-pills">
+      <div class="pill health-low active" data-val="Low" onclick="selectPill('sh-pills',this)">Low</div>
+      <div class="pill health-med" data-val="Medium" onclick="selectPill('sh-pills',this)">Medium</div>
+      <div class="pill health-high" data-val="High" onclick="selectPill('sh-pills',this)">High</div>
+    </div>
+  </div>
+
+  <!-- STEP 3: Salesforce -->
+  <div class="step-block">
+    <div class="step-meta">
+      <span class="step-num">STEP 3</span>
+      <span class="step-title">Salesforce account plan</span>
+    </div>
+    <div class="step-hint">Paste the account plan fields from Salesforce.</div>
+    <textarea id="sf-plan" placeholder="Paste account plan fields — ARR, renewal date, stakeholders, goals, risks..."></textarea>
+    <button class="prefill-btn" onclick="prefill('sf-plan', STERLING_SF)">Use J Sterling Morton example ↗</button>
+  </div>
+
+  <!-- STEP 4: Gong -->
+  <div class="step-block">
+    <div class="step-meta">
+      <span class="step-num">STEP 4</span>
+      <span class="step-title">Recent Gong call notes <span class="opt-tag">optional</span></span>
+    </div>
+    <div class="step-hint">Paste Gong summary from your most recent call.</div>
+    <textarea id="gong-notes" placeholder="Paste Gong summary from your most recent call..."></textarea>
+  </div>
+
+  <!-- STEP 5: District research -->
+  <div class="step-block">
+    <div class="step-meta">
+      <span class="step-num">STEP 5</span>
+      <span class="step-title">District research</span>
+    </div>
+    <div class="sub-card">
+      <div class="sub-card-title">District strategic plan</div>
+      <div class="sub-card-hint">Use their exact language. Find on their website.</div>
+      <textarea id="district-plan" placeholder="Paste key goals and language from their strategic plan..."></textarea>
+    </div>
+    <div class="sub-card">
+      <div class="sub-card-title">State test performance <span class="opt-tag">optional</span></div>
+      <div class="sub-card-hint">State DOE report card — scores, subgroup gaps, trend direction.</div>
+      <textarea id="state-test" placeholder="e.g. ACT composite, ELA proficiency vs. state avg, subgroup gaps..."></textarea>
+    </div>
+  </div>
+
+  <!-- STEP 6: Sigma data -->
+  <div class="step-block">
+    <div class="step-meta">
+      <span class="step-num">STEP 6</span>
+      <span class="step-title">Sigma data</span>
+    </div>
+
+    <div class="sub-card">
+      <div class="sub-card-title">Usage &amp; engagement</div>
+      <div class="field-grid">
+        <div><div class="field-label">License utilization %</div><input type="text" id="license-util" placeholder="e.g. 51%" /></div>
+        <div><div class="field-label">Teacher activation rate</div><input type="text" id="teacher-act" placeholder="e.g. 85%" /></div>
+        <div><div class="field-label">Student activation rate</div><input type="text" id="student-act" placeholder="e.g. 84%" /></div>
+        <div><div class="field-label">Engaged teachers (skills)</div><input type="text" id="eng-teachers" placeholder="e.g. 72.7%" /></div>
+        <div><div class="field-label">Engaged students (skills)</div><input type="text" id="eng-students" placeholder="e.g. 13.6%" /></div>
+        <div><div class="field-label">Avg topics mastered / student</div><input type="text" id="topics-mastered" placeholder="e.g. 18.3" /></div>
+      </div>
+    </div>
+
+    <div class="sub-card">
+      <div class="sub-card-title">Benchmark &amp; growth <span class="opt-tag">if available</span></div>
+      <div class="field-grid">
+        <div><div class="field-label">Benchmark participation rate</div><input type="text" id="bench-part" placeholder="e.g. 68%" /></div>
+        <div><div class="field-label">Students completing both benchmarks</div><input type="text" id="bench-both" placeholder="e.g. 34%" /></div>
+        <div><div class="field-label">Students showing growth</div><input type="text" id="students-growth" placeholder="e.g. 55%" /></div>
+        <div><div class="field-label">Avg benchmark score change</div><input type="text" id="score-change" placeholder="e.g. +3pts" /></div>
+        <div><div class="field-label">Students meeting MEU</div><input type="text" id="meu" placeholder="e.g. 41%" /></div>
+        <div><div class="field-label">Growth rate for MEU students</div><input type="text" id="meu-growth" placeholder="e.g. 79%" /></div>
+      </div>
+    </div>
+
+    <div class="sub-card">
+      <div class="sub-card-title">Writing &amp; feedback <span class="opt-tag">if relevant</span></div>
+      <div class="field-grid">
+        <div><div class="field-label">Writing activation rate</div><input type="text" id="writing-act" placeholder="e.g. 53%" /></div>
+        <div><div class="field-label">Students receiving feedback</div><input type="text" id="feedback-students" placeholder="e.g. 3.5%" /></div>
+        <div><div class="field-label">Student revision rate</div><input type="text" id="revision-rate" placeholder="e.g. 0%" /></div>
+        <div><div class="field-label">Avg WACT topics mastered</div><input type="text" id="wact-topics" placeholder="e.g. 6" /></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 7: NRI data story -->
+  <div class="step-block">
+    <div class="step-meta">
+      <span class="step-num">STEP 7</span>
+      <span class="step-title">NRI data story <span class="opt-tag">optional — or let Claude choose</span></span>
+    </div>
+    <div class="step-hint">Leave unselected and Claude will recommend the best fit based on the district context.</div>
+    <div class="pill-row" id="story-pills">
+      <div class="pill" data-val="Skills Story" onclick="togglePill('story-pills',this)">Skills story</div>
+      <div class="pill" data-val="Writing Story" onclick="togglePill('story-pills',this)">Writing story</div>
+      <div class="pill" data-val="Teacher Story" onclick="togglePill('story-pills',this)">Teacher story</div>
+      <div class="pill" data-val="Feedback Story" onclick="togglePill('story-pills',this)">Feedback story</div>
+    </div>
+    <div class="pill-desc" id="story-desc">Skills = ACT/state test alignment, standards mastery · Writing = composition, argumentation · Teacher = adoption, PD ROI · Feedback = revision behavior, AI grading</div>
+  </div>
+
+  <!-- STEP 8: Additional context -->
+  <div class="step-block">
+    <div class="step-meta">
+      <span class="step-num">STEP 8</span>
+      <span class="step-title">Additional context <span class="opt-tag">optional</span></span>
+    </div>
+    <div class="step-hint">Competitive threats, relationship notes, budget flags, anything else that matters.</div>
+    <textarea id="extra-context" placeholder="e.g. Competitor in play, board approval needed, going in-person, ESSER cliff..."></textarea>
+  </div>
+
+  <div class="generate-wrap">
+    <div class="btn-row">
+      <button class="generate-btn" onclick="generatePrompt()">Build my prep prompt ↗</button>
+      <button class="generate-btn-deck" onclick="generateDeckPrompt()">Build my deck prompt ↗</button>
+    </div>
+    <div class="btn-hint">Prep prompt = meeting strategy · Deck prompt = slide content draft</div>
+  </div>
+
+  <div class="output-box" id="output-box">
+    <div class="output-header">
+      <span class="output-label">Prep prompt — paste into a new Claude chat</span>
+      <button class="copy-btn" onclick="copyPrompt('output-text', this)">Copy ↗</button>
+    </div>
+    <div class="output-text" id="output-text"></div>
+  </div>
+
+  <div class="output-box-deck" id="output-box-deck">
+    <div class="output-header">
+      <span class="output-label" style="color: var(--teal-mid);">Deck prompt — paste into a new Claude chat</span>
+      <button class="copy-btn" style="background: var(--teal-mid);" onclick="copyPrompt('output-text-deck', this)">Copy ↗</button>
+    </div>
+    <div class="output-text" id="output-text-deck"></div>
+  </div>
+
+</div>
+
+<script>
+const STERLING_SF = `District: J. Sterling Morton HSD (Illinois)
+ARR: $48,000
+Renewal date: August (board approval target: July)
+Renewal status: Maybe
+Stakeholders: Megan Delaney (Director ELA — primary/only real contact), Dr. Joshua McMahon (Asst. Superintendent — zero relationship)
+Goals: ACT readiness (30% proficiency, needs 8% growth), CBE curriculum (Stevenson HS model), disciplinary literacy
+Funding: ESSER → Title transition, CFO still vacant
+Competitors: Class Companion (Panorama integration), Microsoft AI
+Schools: 3 high schools, ~8,200 students`;
+
+const meetingDescs = {
+  'BTS Impact Planning': 'Early season strategic reset. 26-27 discovery and goal-setting are the primary agenda.',
+  'Impact Review': 'Reviewing last year\'s outcomes and proving ROI. Data is the anchor.',
+  'Renewal Conversation': 'Closing the contract. Value, commitment, and next steps.',
+  'Impact + Renewal': 'Combined meeting. Proving last year\'s value while closing the contract. Both tracks run in parallel.'
+};
+
+function selectPill(groupId, el) {
+  document.querySelectorAll('#' + groupId + ' .pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  if (groupId === 'meeting-pills') {
+    document.getElementById('meeting-desc').textContent = meetingDescs[el.dataset.val] || '';
+  }
+}
+
+function togglePill(groupId, el) {
+  const wasActive = el.classList.contains('active');
+  document.querySelectorAll('#' + groupId + ' .pill').forEach(p => p.classList.remove('active'));
+  if (!wasActive) el.classList.add('active');
+}
+
+function prefill(id, val) { document.getElementById(id).value = val; }
+function v(id) { return (document.getElementById(id)||{}).value||''; }
+function activePill(groupId) {
+  const el = document.querySelector('#' + groupId + ' .pill.active');
+  return el ? el.dataset.val : '';
+}
+
+function generatePrompt() {
+  const meeting = activePill('meeting-pills') || 'BTS Impact Planning';
+  const health = activePill('sh-pills') || 'Low';
+  const story = activePill('story-pills');
+  const sf = v('sf-plan');
+  const gong = v('gong-notes');
+  const distPlan = v('district-plan');
+  const stateTest = v('state-test');
+  const extra = v('extra-context');
+
+  const usageLines = [
+    v('license-util') && 'License utilization: ' + v('license-util'),
+    v('teacher-act') && 'Teacher activation: ' + v('teacher-act'),
+    v('student-act') && 'Student activation: ' + v('student-act'),
+    v('eng-teachers') && 'Engaged teachers (skills): ' + v('eng-teachers'),
+    v('eng-students') && 'Engaged students (skills): ' + v('eng-students'),
+    v('topics-mastered') && 'Avg topics mastered/student: ' + v('topics-mastered')
+  ].filter(Boolean).join('\n');
+
+  const benchLines = [
+    v('bench-part') && 'Benchmark participation: ' + v('bench-part'),
+    v('bench-both') && 'Students completing both benchmarks: ' + v('bench-both'),
+    v('students-growth') && 'Students showing growth: ' + v('students-growth'),
+    v('score-change') && 'Avg score change: ' + v('score-change'),
+    v('meu') && 'Students meeting MEU: ' + v('meu'),
+    v('meu-growth') && 'MEU student growth rate: ' + v('meu-growth')
+  ].filter(Boolean).join('\n');
+
+  const writingLines = [
+    v('writing-act') && 'Writing activation: ' + v('writing-act'),
+    v('feedback-students') && 'Students receiving feedback: ' + v('feedback-students'),
+    v('revision-rate') && 'Student revision rate: ' + v('revision-rate'),
+    v('wact-topics') && 'Avg WACT topics mastered: ' + v('wact-topics')
+  ].filter(Boolean).join('\n');
+
+  // Health weighting logic
+  const healthWeighting = {
+    'Low': 'Q1 (discovery) dominates — lean heavily into understanding what is still important to them and what has changed. Q2 (are we on track) is a light touch only. Q3 (next steps) must include a concrete renewal ask.',
+    'Medium': 'Q1 (discovery) and Q2 (data) carry equal weight. Champion is engaged — use data to build the business case they can take to leadership. Q3 must arm them with what to say internally.',
+    'High': 'Q2 (data) dominates — EB is present, make the impact case clearly and confidently. Q1 is confirmation not discovery. Q3 drives toward a commitment in the room.'
+  };
+
+  // Discovery questions — always required
+  const discoverySection = `26-27 DISCOVERY QUESTIONS (always required — cover all four areas):
+- Goals & Accountability: What literacy/writing goals are you carrying into 26-27? Have district or state accountability targets shifted?
+- Instructional Direction: Are there new curriculum initiatives, scope changes, or instructional frameworks we should align to?
+- Leadership & People: Any staffing changes — new principals, curriculum directors, or ELA leads we should know about?
+- Budget & Funding: How is funding looking for 26-27? Any shifts from ESSER, Title, or other grants we should be aware of?`;
+
+  let prompt = `You are a strategic meeting prep assistant for a NoRedInk (NRI) Account Manager. NRI is a K-12 edtech platform focused on writing and literacy for grades 3-12. You are helping prepare for a back-to-school (BTS) meeting with a school district.
+
+BTS season is always a strategic reset — 26-27 discovery and renewal are always parallel tracks, regardless of meeting type.
+
+═══════════════════════════════════════
+MEETING CONTEXT
+═══════════════════════════════════════
+Meeting type: ${meeting}
+Stakeholder health: ${health}
+Health weighting: ${healthWeighting[health]}
+${story ? 'Preferred NRI data story: ' + story : 'NRI data story: recommend the best fit based on district context (Skills, Writing, Teacher, or Feedback)'}
+
+`;
+
+  if (sf) prompt += `═══════════════════════════════════════\nSALESFORCE ACCOUNT PLAN\n═══════════════════════════════════════\n${sf}\n\n`;
+  if (gong) prompt += `═══════════════════════════════════════\nRECENT GONG CALL NOTES\n═══════════════════════════════════════\n${gong}\n\n`;
+
+  if (distPlan || stateTest) {
+    prompt += `═══════════════════════════════════════\nDISTRICT RESEARCH\n═══════════════════════════════════════\n`;
+    if (distPlan) prompt += `Strategic plan:\n${distPlan}\n`;
+    if (stateTest) prompt += `\nState test performance:\n${stateTest}\n`;
+    prompt += '\n';
+  }
+
+  if (usageLines || benchLines || writingLines) {
+    prompt += `═══════════════════════════════════════\nSIGMA DATA\n═══════════════════════════════════════\n`;
+    if (usageLines) prompt += `Usage & Engagement:\n${usageLines}\n`;
+    if (benchLines) prompt += `\nBenchmark & Growth:\n${benchLines}\n`;
+    if (writingLines) prompt += `\nWriting & Feedback:\n${writingLines}\n`;
+    prompt += '\n';
+  }
+
+  if (extra) prompt += `═══════════════════════════════════════\nADDITIONAL CONTEXT\n═══════════════════════════════════════\n${extra}\n\n`;
+
+  prompt += `═══════════════════════════════════════\nTHREE QUESTIONS FRAMEWORK
+═══════════════════════════════════════
+Every NRI BTS meeting is organized around three questions:
+Q1 — What is important to them (or still important to them)?
+Q2 — Are we on track to achieve it?
+Q3 — What do we need to do next?
+
+${discoverySection}
+
+═══════════════════════════════════════
+PLEASE PREPARE THE FOLLOWING
+═══════════════════════════════════════
+
+1. MEETING FOCUS
+   One sentence: what is this meeting really about? What is the AM trying to accomplish?
+
+2. STAKEHOLDER READ
+   Based on health level and context: who is in the room, what do they care about, what is their likely posture going in?
+
+3. STRATEGIC ANCHORS (Q1)
+   2-3 district priorities to open with — use their language from the strategic plan. Frame as confirmation questions, not assumptions.
+
+4. 26-27 DISCOVERY QUESTIONS
+   Draft 2 specific, open-ended questions for each of the four areas (Goals & Accountability, Instructional Direction, Leadership & People, Budget & Funding). Make them feel natural for conversation, not a survey.
+
+5. DATA NARRATIVE (Q2)${meeting === 'BTS Impact Planning' ? ' — light touch only unless EB is present' : ''}
+   ${story ? 'Using the ' + story + ':' : 'Choose the NRI data story that best fits this district and explain why. Then:'}
+   - Lead with the strongest 1-2 data points (write the actual headline, not just the metric)
+   - Flag any underperforming metrics to address proactively — do not wait for them to raise it
+   ${meeting !== 'BTS Impact Planning' ? '- Draft a 2-sentence ROI statement to anchor the data section' : ''}
+
+6. THREE QUESTIONS PREP
+   Write the specific language the AM should use for each of Q1, Q2, Q3 in this meeting — not generic, tailored to this district.
+
+7. HARD QUESTIONS
+   What are the 2-3 most difficult questions this district might ask? Draft a direct, confident response to each.
+
+8. WALK OUT WITH (Q3)
+   What must the AM leave this meeting having secured? Always include BOTH:
+   - A renewal milestone (decision, signed, verbal commit, next step with timeline)
+   - A 26-27 commitment (agreed goals, agreed metrics, or confirmed next meeting with agenda)
+
+${meeting !== 'BTS Impact Planning' ? `9. RENEWAL NOTE
+   Based on health level and renewal status: what is the renewal strategy for this meeting? What is the ask, and what is the fallback if they aren't ready to commit?
+
+10. VERIFY BEFORE MEETING
+    3-5 things the AM should confirm or look up before walking in the door.` : `9. VERIFY BEFORE MEETING
+    3-5 things the AM should confirm or look up before walking in the door.`}`;
+
+  document.getElementById('output-text').textContent = prompt;
+  const box = document.getElementById('output-box');
+  box.classList.add('visible');
+  setTimeout(() => box.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+}
+
+function copyPrompt(elId, btn) {
+  const text = document.getElementById(elId).textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✓ Copied!';
+    setTimeout(() => { btn.textContent = 'Copy ↗'; }, 2000);
+  });
+}
+
+function generateDeckPrompt() {
+  const meeting = activePill('meeting-pills') || 'BTS Impact Planning';
+  const health = activePill('sh-pills') || 'Low';
+  const story = activePill('story-pills');
+  const sf = v('sf-plan');
+  const gong = v('gong-notes');
+  const distPlan = v('district-plan');
+  const stateTest = v('state-test');
+  const extra = v('extra-context');
+
+  const usageLines = [
+    v('license-util') && 'License utilization: ' + v('license-util'),
+    v('teacher-act') && 'Teacher activation: ' + v('teacher-act'),
+    v('student-act') && 'Student activation: ' + v('student-act'),
+    v('eng-teachers') && 'Engaged teachers (skills): ' + v('eng-teachers'),
+    v('eng-students') && 'Engaged students (skills): ' + v('eng-students'),
+    v('topics-mastered') && 'Avg topics mastered/student: ' + v('topics-mastered')
+  ].filter(Boolean).join('\n');
+
+  const benchLines = [
+    v('bench-part') && 'Benchmark participation: ' + v('bench-part'),
+    v('bench-both') && 'Students completing both benchmarks: ' + v('bench-both'),
+    v('students-growth') && 'Students showing growth: ' + v('students-growth'),
+    v('score-change') && 'Avg score change: ' + v('score-change'),
+    v('meu') && 'Students meeting MEU: ' + v('meu'),
+    v('meu-growth') && 'MEU student growth rate: ' + v('meu-growth')
+  ].filter(Boolean).join('\n');
+
+  const writingLines = [
+    v('writing-act') && 'Writing activation: ' + v('writing-act'),
+    v('feedback-students') && 'Students receiving feedback: ' + v('feedback-students'),
+    v('revision-rate') && 'Student revision rate: ' + v('revision-rate'),
+    v('wact-topics') && 'Avg WACT topics mastered: ' + v('wact-topics')
+  ].filter(Boolean).join('\n');
+
+  const slideMap = {
+    'BTS Impact Planning': ['S1: Title', 'S2: Agenda', 'S3: District Strategic Priorities (ALWAYS FIRST)', 'S4: Progress This Year (light — skip if no EB)', 'S5: 26-27 Focus Areas + Agreed Metrics (ALWAYS REQUIRED)', 'S6: 26-27 Action Plan', 'S7: Next Steps + Renewal'],
+    'Impact Review': ['S1: Title', 'S2: Agenda', 'S3: District Strategic Priorities (ALWAYS FIRST)', 'S4: Progress This Year (full data story required)', 'S5: 26-27 Focus Areas + Agreed Metrics (ALWAYS REQUIRED)', 'S6: 26-27 Action Plan', 'S7: Next Steps + Renewal'],
+    'Renewal Conversation': ['S1: Title', 'S2: Agenda', 'S3: District Strategic Priorities (ALWAYS FIRST)', 'S4: Progress This Year (value story required)', 'S5: 26-27 Focus Areas + Agreed Metrics (ALWAYS REQUIRED)', 'S6: 26-27 Action Plan', 'S7: Next Steps + Renewal (renewal close required)'],
+    'Impact + Renewal': ['S1: Title', 'S2: Agenda', 'S3: District Strategic Priorities (ALWAYS FIRST)', 'S4: Progress This Year (full data story + renewal value)', 'S5: 26-27 Focus Areas + Agreed Metrics (ALWAYS REQUIRED)', 'S6: 26-27 Action Plan', 'S7: Next Steps + Renewal (dual-track close)']
+  };
+
+  const slides = (slideMap[meeting] || slideMap['BTS Impact Planning']).join('\n');
+
+  let prompt = `You are a deck content writer for a NoRedInk (NRI) Account Manager preparing a back-to-school meeting presentation. NRI is a K-12 edtech platform focused on writing and literacy for grades 3-12.
+
+Your job is to draft the slide content for a ${meeting} meeting. Write content that is specific to this district — not generic. Use their language, their goals, their data.
+
+═══════════════════════════════════════
+MEETING CONTEXT
+═══════════════════════════════════════
+Meeting type: ${meeting}
+Stakeholder health: ${health}
+Audience: ${health === 'High' ? 'Executive sponsor + champion — make the impact case boldly' : health === 'Medium' ? 'Champion who will bring findings to leadership — arm them with the story' : 'Champion only — no exec in room — build trust and surface the renewal path'}
+${story ? 'NRI data story: ' + story : 'NRI data story: choose the best fit and state your choice at the top'}
+
+`;
+
+  if (sf) prompt += `═══════════════════════════════════════\nACCOUNT CONTEXT (Salesforce)\n═══════════════════════════════════════\n${sf}\n\n`;
+  if (gong) prompt += `═══════════════════════════════════════\nRECENT CALL NOTES\n═══════════════════════════════════════\n${gong}\n\n`;
+  if (distPlan || stateTest) {
+    prompt += `═══════════════════════════════════════\nDISTRICT RESEARCH\n═══════════════════════════════════════\n`;
+    if (distPlan) prompt += `Strategic plan:\n${distPlan}\n`;
+    if (stateTest) prompt += `\nState test performance:\n${stateTest}\n`;
+    prompt += '\n';
+  }
+  if (usageLines || benchLines || writingLines) {
+    prompt += `═══════════════════════════════════════\nNRI DATA (from Sigma)\n═══════════════════════════════════════\n`;
+    if (usageLines) prompt += `Usage & Engagement:\n${usageLines}\n`;
+    if (benchLines) prompt += `\nBenchmark & Growth:\n${benchLines}\n`;
+    if (writingLines) prompt += `\nWriting & Feedback:\n${writingLines}\n`;
+    prompt += '\n';
+  }
+  if (extra) prompt += `═══════════════════════════════════════\nADDITIONAL CONTEXT\n═══════════════════════════════════════\n${extra}\n\n`;
+
+  prompt += `═══════════════════════════════════════
+DECK STRUCTURE — 7 SLIDES
+═══════════════════════════════════════
+${slides}
+
+═══════════════════════════════════════
+SLIDE CONTENT RULES
+═══════════════════════════════════════
+- S3 (District Strategic Priorities) ALWAYS comes before any NRI data. Never lead with our data.
+- S5 (26-27 Focus Areas) is ALWAYS required and NEVER skipped — it is the working slide where the AM and district agree on metrics together. Frame it as a proposal for their input, not a declaration.
+- Every slide must have a single clear headline (not a category title — a real point of view).
+- Data slides: lead with the strongest 1-2 numbers. Flag any underperforming metric proactively — do not hide it.
+- S7 must include a renewal milestone AND a 26-27 commitment as the Walk Out With — never only one of these.
+- Keep bullet points to 2-3 per section. Specific and scannable, not exhaustive.
+- Use the district's language from the strategic plan wherever possible.
+- Speaker notes: one brief cue per slide — what the AM should say or watch for, not a script.
+
+═══════════════════════════════════════
+OUTPUT FORMAT
+═══════════════════════════════════════
+For each slide output exactly this structure:
+
+SLIDE [N] — [SLIDE NAME]
+Headline: [the main point of view for this slide — one punchy sentence]
+Content:
+  [bullet or section content]
+Speaker note: [brief AM cue — 1-2 sentences max]
+---
+
+Draft all 7 slides now.`;
+
+  document.getElementById('output-text-deck').textContent = prompt;
+  const box = document.getElementById('output-box-deck');
+  box.classList.add('visible');
+  setTimeout(() => box.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+}
+</script>
+</body>
+</html>
